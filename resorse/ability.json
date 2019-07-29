@@ -1,0 +1,20 @@
+{
+    "farmer":[
+        {
+            "name":"Power_Attack",
+            "Lv" : 1,
+            "kind":"Direct_attack",
+            "effect":{
+                "Damage_magnification":1.2
+            }
+        },
+        {
+            "name":"Fresh_vegetables",
+            "Lv":5,
+            "kind":"Recovery_feat",
+            "effect":{
+                "Recovery":0.2
+            }
+        }
+    ]
+}

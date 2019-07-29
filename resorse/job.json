@@ -1,0 +1,27 @@
+{
+    "jobs" : {
+        "farmer" : {
+        "name" : "farmer",
+        "ability" : "farmer",
+        "growth_rate" : {
+            "hp":2,
+            "mp":1,
+            "atk":1,
+            "def":1,
+            "int":1,
+            "pow":1
+        },
+        "initial_value":{
+            "hp":20,
+            "mp":10,
+            "atk":20,
+            "def":15,
+            "int":5,
+            "pow":10
+        }
+        }
+    },
+    "jobs_list":[
+        "farmer"
+    ]
+}

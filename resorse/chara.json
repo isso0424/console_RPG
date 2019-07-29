@@ -1,0 +1,26 @@
+{
+  "isso": {
+    "ability_set": "farmer",
+    "ablitys": {
+      "Power_Attack": {
+        "Lv": 1,
+        "effect": {
+          "Damage_magnification": 1.2
+        },
+        "kind": "Direct_attack",
+        "name": "Power_Attack"
+      }
+    },
+    "job": "farmer",
+    "name": "isso",
+    "sexual": "man",
+    "status": {
+      "atk": 20,
+      "def": 15,
+      "hp": 20,
+      "int": 5,
+      "mp": 10,
+      "pow": 10
+    }
+  }
+}
