@@ -5,6 +5,7 @@
             "Lv" : 1,
             "kind":"Direct_attack",
             "effect":{
+                "name":"Damage_magnification",
                 "Damage_magnification":1.2
             }
         },
