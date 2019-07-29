@@ -15,6 +15,9 @@ void Write::chara(string name, string job, string sexual){
     user.insert(make_pair("name", picojson::value(name)));
     user.insert(make_pair("job", picojson::value(job)));
     user.insert(make_pair("sexual", picojson::value(sexual)));
+    user.insert(make_pair("place", picojson::value("home")));
+    double b = 0;
+    user.insert(make_pair("money", picojson::value(b)));
     fs.open("resorse/job.json");
     fs >> val;
     fs.close();
@@ -36,15 +39,15 @@ void Write::chara(string name, string job, string sexual){
     for (const auto& e : abilitys){
         arr.push_back(e.get<picojson::object>());
     }
-    
+    picojson::array ar;
     for (object e : arr){
         int a = e["Lv"].get<double>();
         if (a == 1){
             abilit.insert(make_pair(e["name"].get<string>(), e));
+            ar.push_back(value(e));
         }
     }
-    user["ablitys"] = picojson::value(abilit);
-    root[name] = picojson::value(user);
+    user.insert(make_pair("abilitys", ar));
     ofstream ofs("resorse/chara.json");
-    ofs << picojson::value(root).serialize(true);
+    ofs << picojson::value(user).serialize(true);
 }

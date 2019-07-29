@@ -7,6 +7,9 @@
 #include <windows.h>
 #include <filesystem>
 #include <sys/stat.h>
+#include <typeinfo>
+#include "Place.hpp"
+#include "Home.hpp"
 #ifndef UNICODE
     typedef std::string String;
 #else
@@ -51,30 +54,12 @@ int main(){
         Create obj;
         obj.chara();
     }
-    cout << "‚Ç‚ÌƒLƒƒƒ‰‚ðŽg‚¢‚Ü‚·‚©" << endl;
-    ifstream fs;
-    fs.open("resorse/chara.json", ios::binary);
-    picojson::value val2;
-    fs >> val2;
+    fstream fs;
+    fs.open("resorse/chara.json");
+    fs >> val;
     fs.close();
-    picojson::object charas = val2.get<picojson::object>();
-    int count = 1;
-    std::vector<string> chara_list;
-    for (const auto& e : charas){
-        cout << charas["name"].get<string>();
-        count++;
-        chara_list.push_back(charas["name"].get<string>());
-    }
-    string chara_name;
-    vector<string>::iterator siter = find(
-        chara_list.begin(),chara_list.end(),chara_name
-    );
-    while (true){
-        cout << "\n>>>";
-        cin >> chara_name;
-        if (siter != chara_list.end()){
-            break;
-        }
-    }
+    cout << "‚æ‚¤‚±‚»" << val.get<picojson::object>()["name"].get<string>() << "‚³‚ñ" << endl;
+    Home home;
+    home.home();
     return 0;
 }

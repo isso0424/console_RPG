@@ -7,24 +7,24 @@ using namespace std;
 using namespace picojson;
 
 void Create::chara(){
-    cout << "ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼åã‚’å…¥åŠ›ã—ã¦ãã ã•ã„" << endl << ">>>";
+    cout << "ƒLƒƒƒ‰ƒNƒ^[–¼‚ð“ü—Í‚µ‚Ä‚­‚¾‚³‚¢" << endl << ">>>";
     cin >> name ;
-    cout << "æ€§åˆ¥ã‚’å…¥åŠ›ã—ã¦ãã ã•ã„ : man / woman" << endl << ">>>";
+    cout << "«•Ê‚ð“ü—Í‚µ‚Ä‚­‚¾‚³‚¢ : man / woman" << endl << ">>>";
     while (true){
         cin >> sexual;
         if (sexual == "man" or sexual == "woman"){
             break;
         }
-        cout << "man ã‹ woman ã§å…¥åŠ›ã—ã¦ãã ã•ã„" << endl << ">>>";
+        cout << "man / woman ‚Å“ü—Í‚µ‚Ä‚­‚¾‚³‚¢" << endl << ">>>";
     }
     fs.open("resorse/job.json", ios::binary);
     fs >> val;
     fs.close();
-    jobs = val.get<picojson::object>["jobs_list"].get<picojson::array>();
+    jobs = val.get<picojson::object>()["jobs_list"].get<picojson::array>();
     for (const auto& e: jobs){
         arr.push_back(e.get<std::string>());
     }
-    cout << "è·æ¥­ã‚’é¸æŠžã—ã¦ãã ã•ã„" << endl;
+    cout << "E‹Æ‚ð‘I‘ð‚µ‚Ä‚­‚¾‚³‚¢" << endl;
     count = 1;
     for (string s:arr){
         cout << count << " / " << s << endl;
@@ -37,7 +37,7 @@ void Create::chara(){
             job = arr[job_num - 1];
             break;
         }
-        cout << "å…¥åŠ›ã•ã‚ŒãŸå€¤ãŒä¸æ­£ã§ã™" << endl << ">>>"; 
+        cout << "“ü—Í‚³‚ê‚½’l‚ª•s³‚Å‚·" << endl << ">>>"; 
     }
     Write write;
     write.chara(name, job, sexual);
