@@ -18,7 +18,14 @@
             "def":15,
             "int":5,
             "pow":10
-        }
+        },
+        "job_command" : 
+            {
+                "name" : "Farm work",
+                "type" : "make",
+                "reward" : "vegetable"
+            }
+        
         }
     },
     "jobs_list":[

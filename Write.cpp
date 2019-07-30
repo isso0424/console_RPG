@@ -4,11 +4,15 @@
 #include <iostream>
 #include <sstream>
 #include "Write.hpp"
+#include <unordered_map>
 
 using namespace std;
 using namespace picojson;
 
-void Write::chara(string name, string job, string sexual){
+void Write::chara(string name, string job, string sexual, string new_item, 
+vector<string> now_list = {}, vector<double> now_status = {}, double money = 0, 
+double cool = 10, bool over_write = false)
+{
     picojson::object user;
     picojson::object root;
     picojson::object abilit;
@@ -16,8 +20,8 @@ void Write::chara(string name, string job, string sexual){
     user.insert(make_pair("job", picojson::value(job)));
     user.insert(make_pair("sexual", picojson::value(sexual)));
     user.insert(make_pair("place", picojson::value("home")));
-    double b = 0;
-    user.insert(make_pair("money", picojson::value(b)));
+    user.insert(make_pair("money", picojson::value(money)));
+    user.insert(make_pair("cool_time", picojson::value(cool)));
     fs.open("resorse/job.json");
     fs >> val;
     fs.close();
@@ -29,6 +33,8 @@ void Write::chara(string name, string job, string sexual){
                                 ["jobs"].get<picojson::object>()
                                 [job].get<picojson::object>()
                                 ["ability"].get<std::string>();
+    picojson::array items;
+    user.insert(make_pair("item_list", items));
     user.insert(make_pair("status", status));
     user.insert(make_pair("ability_set", ability));
     fs.open("resorse/ability.json");
@@ -50,4 +56,24 @@ void Write::chara(string name, string job, string sexual){
     user.insert(make_pair("abilitys", ar));
     ofstream ofs("resorse/chara.json");
     ofs << picojson::value(user).serialize(true);
+}
+
+unordered_map<string, string> Write::load_string(){
+    fs.open("resorse/chara.json");
+    fs >> val;
+    fs.close();
+    object obj = val.get<object>();
+    pro_string["name"] = obj["name"].get<string>();
+    pro_string["job"] = obj["job"].get<string>();
+    pro_string["sexual"] = obj["sexual"].get<string>();
+    pro_string["ability_set"] = obj["ability_set"].get<string>();
+    picojson::array abilitys = obj["abilitys"].get<picojson::array>();
+    for (picojson::value e : abilitys){
+        pro_string["abi_name"] = e.get<object>()["name"].get<string>();
+        pro_string["kind"] = e.get<object>()["kind"].get<string>();
+        picojson::object obj2 = e.get<object>()["effect"].get<object>();
+        pro_string["eff_name"] = obj2["name"].get<string>();
+        pro_string["eff_size"] = obj2["effect_size"].get<double>();
+    }
+    return pro_string;
 }

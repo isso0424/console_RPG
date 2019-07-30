@@ -6,7 +6,7 @@
             "kind":"Direct_attack",
             "effect":{
                 "name":"Damage_magnification",
-                "Damage_magnification":1.2
+                "effect_size":1.2
             }
         },
         {
@@ -14,7 +14,8 @@
             "Lv":5,
             "kind":"Recovery_feat",
             "effect":{
-                "Recovery":0.2
+                "name":"recover",
+                "effect_size":0.2
             }
         }
     ]

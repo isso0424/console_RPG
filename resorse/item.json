@@ -1,0 +1,9 @@
+{
+    "vegetable" : {
+        "name" : "vagetable",
+        "effect" : {
+            "type" : "heel",
+            "size" : 15
+        }
+    }
+}

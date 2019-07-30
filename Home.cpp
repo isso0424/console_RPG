@@ -2,11 +2,43 @@
 #include "picojson.h"
 #include <fstream>
 #include "Place.hpp"
-
+#include <ostream>
+#include <windows.h>
+#include "Create.hpp"
 using namespace std;
 
+void Home::job_command(){
+    fs.open("resorse/chara.json");
+    fs >> val;
+    fs.close();
+    string job = val.get<picojson::object>()["job"].get<string>();
+    cout << 1;
+    double cool = val.get<picojson::object>()["cool_time"].get<double>();
+    fs.open("resorse/job.json");
+    fs >> val;
+    fs.close();
+    cout << job;
+    picojson::object command = val.get<picojson::object>()["jobs"].get<picojson::object>()[job].get<picojson::object>()["job_command"].get<picojson::object>();
+    if (cool == 0){
+        cout << command["name"].get<string>() << "を使用します" << endl;
+        string kind = command["type"].get<string>();
+        if (kind == "make"){
+            fs.open("resorse/chara.json");
+            fs >> val;
+            fs.close();
+            DeleteFileA("resorse/chara.json");
+            ofstream("resorse/chara.json");
+            picojson::array item_list = val.get<picojson::object>()["item_list"].get<picojson::array>();
+            item_list.push_back(picojson::value(command["reward"].get<string>()));
+            ofstream ofs("resorse/chara.json");
+            double a = 10;
+            auto b = val.get<picojson::object>();
+            ofs << picojson::value(b).serialize(true);
+        }
+    }
+}
+
 void Home::checkstatus(){
-    fstream fs;
     fs.open("resorse/chara.json");
     picojson::value val;
     fs >> val;
@@ -35,7 +67,7 @@ void Home::checkstatus(){
 
 int Home::menu(){
     count = 1;
-    std::vector<std::string> choice{"出発", "ショップ", "各種ステータス確認","職業コマンド","探検度確認", "セーブ", "ゲーム終了"};
+    std::vector<std::string> choice{"出発", "ショップ", "各種ステータス確認","職業コマンド","探検度確認", "ゲーム終了"};
     cout << "めにゅう" << endl <<"###################################################" << endl;
     for (std::string cho : choice){
         cout << count << "/" << cho << " ";
@@ -46,6 +78,7 @@ int Home::menu(){
     }
     cout << endl << "###################################################" << endl;
     while(true){
+        int chose;
         cin >> chose;
         if (0 < chose < count){
             return chose;
@@ -66,7 +99,10 @@ void Home::home(){
         case 3:
             checkstatus();
             break;
-        case 7: //ゲーム終了
+        case 4:
+            job_command();
+            break;
+        case 6: //ゲーム終了
             return;
             break;
         default:
