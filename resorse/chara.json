@@ -1,0 +1,32 @@
+{
+  "Lv": 1,
+  "ability_set": "farmer",
+  "abilitys": [
+    {
+      "Lv": 0,
+      "effect": {
+        "effect_size": 0,
+        "name": "Damage_magnification"
+      },
+      "kind": "Direct_attack",
+      "name": "Power_Attack"
+    }
+  ],
+  "cool_time": 10,
+  "item_list": [
+    "vegetable",
+    "vegetable"
+  ],
+  "job": "farmer",
+  "money": 0,
+  "name": "isso",
+  "sexual": "man",
+  "status": {
+    "atk": 20,
+    "def": 15,
+    "hp": 20,
+    "int": 5,
+    "mp": 10,
+    "pow": 10
+  }
+}

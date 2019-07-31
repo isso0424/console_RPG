@@ -57,6 +57,10 @@ unordered_map<string, double> Write::load_float(){
 
 void Write::over_write(vector<string> c_strings = {}, vector<double> c_float = {}, vector<bool> bools = {}){
     // {abi, cool, Lv, money, status, atk, def, hp, int, mp, pow}
+    fs.open("resorse/chara.json");
+    fs >> val;
+    fs.close();
+    picojson::object obj = val.get<object>();
     picojson::array abi_list;
     picojson::object status;
     tie(pro_string, abi_name) = load_string();
@@ -134,34 +138,36 @@ void Write::over_write(vector<string> c_strings = {}, vector<double> c_float = {
         }
         else{
             status.insert(make_pair("def", value(pro_float["def"])));
-        }
+        }itr3++;
         if (*itr3){
             status.insert(make_pair("hp", value(*itr2)));
         itr2++;
         }
         else{
         status.insert(make_pair("hp", value(pro_float["hp"])));
-        }
+        }itr3++;
         if(*itr3){
             status.insert(make_pair("int", value(*itr2)));
         itr2++;
         }
         else{
             status.insert(make_pair("int", value(pro_float["int"])));
-        }
+        }itr3++;
         if(*itr3){
             status.insert(make_pair("mp", value(*itr2)));
         itr2++;
         }
         else{
             status.insert(make_pair("mp", value(pro_float["mp"])));
-        }if(*itr3){
+        }itr3++;
+        if(*itr3){
             status.insert(make_pair("pow", value(*itr2)));
         itr2++;
         }
         else{
             status.insert(make_pair("pow", value(pro_float["pow"])));
-        }user.insert(make_pair("status", value(status)));
+        }itr3++;
+        user.insert(make_pair("status", value(status)));
     } else {
         status.insert(make_pair("atk", value(pro_float["atk"])));
         status.insert(make_pair("def", value(pro_float["def"])));
@@ -170,8 +176,19 @@ void Write::over_write(vector<string> c_strings = {}, vector<double> c_float = {
         status.insert(make_pair("mp", value(pro_float["mp"])));
         status.insert(make_pair("pow", value(pro_float["pow"])));
         user.insert(make_pair("status", value(status)));
+        int a = 0;
+        while (a != 7){
+            *itr3++;
+            a++;
+        }
     }
-    
+    picojson::array item_list = obj["item_list"].get<picojson::array>();
+    if (*itr3){
+        item_list.push_back(value(*itr));
+        cout << *itr;
+    }
+    user.insert(make_pair("item_list", item_list));
+    ofstream("resorse/chara.json");
     ofstream ofs("resorse/chara.json");
     ofs << value(user).serialize(true);
 }

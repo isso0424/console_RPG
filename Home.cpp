@@ -27,9 +27,9 @@ void Home::job_command(){
             fs.close();
             Write write;
             double new_cool = 10;
-            write.over_write({}, {}, {false, true, false, false, false, false, false, false, false, false, false});
+            write.over_write({"vegetable"}, {10}, {false, true, false, false, false, false, false, false, false, false, false, true});
             picojson::array item_list = val.get<picojson::object>()["item_list"].get<picojson::array>();
-            item_list.push_back(picojson::value(command["reward"].get<string>()));
+            item_list.push_back(picojson::value(command["reward"].get<string>()));  
         }
     }
     else{
