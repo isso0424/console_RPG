@@ -5,6 +5,7 @@
 #include <ostream>
 #include <windows.h>
 #include "Create.hpp"
+#include "Write.hpp"
 using namespace std;
 
 void Home::job_command(){
@@ -12,12 +13,10 @@ void Home::job_command(){
     fs >> val;
     fs.close();
     string job = val.get<picojson::object>()["job"].get<string>();
-    cout << 1;
     double cool = val.get<picojson::object>()["cool_time"].get<double>();
     fs.open("resorse/job.json");
     fs >> val;
     fs.close();
-    cout << job;
     picojson::object command = val.get<picojson::object>()["jobs"].get<picojson::object>()[job].get<picojson::object>()["job_command"].get<picojson::object>();
     if (cool == 0){
         cout << command["name"].get<string>() << "を使用します" << endl;
@@ -26,15 +25,15 @@ void Home::job_command(){
             fs.open("resorse/chara.json");
             fs >> val;
             fs.close();
-            DeleteFileA("resorse/chara.json");
-            ofstream("resorse/chara.json");
+            Write write;
+            double new_cool = 10;
+            write.over_write({}, {}, {false, true, false, false, false, false, false, false, false, false, false});
             picojson::array item_list = val.get<picojson::object>()["item_list"].get<picojson::array>();
             item_list.push_back(picojson::value(command["reward"].get<string>()));
-            ofstream ofs("resorse/chara.json");
-            double a = 10;
-            auto b = val.get<picojson::object>();
-            ofs << picojson::value(b).serialize(true);
         }
+    }
+    else{
+        cout << "クールタイム中です" << endl;
     }
 }
 

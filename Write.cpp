@@ -5,75 +5,173 @@
 #include <sstream>
 #include "Write.hpp"
 #include <unordered_map>
+#include <windows.h>
 
 using namespace std;
 using namespace picojson;
 
-void Write::chara(string name, string job, string sexual, string new_item, 
-vector<string> now_list = {}, vector<double> now_status = {}, double money = 0, 
-double cool = 10, bool over_write = false)
-{
-    picojson::object user;
-    picojson::object root;
-    picojson::object abilit;
-    user.insert(make_pair("name", picojson::value(name)));
-    user.insert(make_pair("job", picojson::value(job)));
-    user.insert(make_pair("sexual", picojson::value(sexual)));
-    user.insert(make_pair("place", picojson::value("home")));
-    user.insert(make_pair("money", picojson::value(money)));
-    user.insert(make_pair("cool_time", picojson::value(cool)));
-    fs.open("resorse/job.json");
-    fs >> val;
-    fs.close();
-    picojson::object status = val.get<picojson::object>()
-                                ["jobs"].get<picojson::object>()
-                                [job].get<picojson::object>()
-                                ["initial_value"].get<picojson::object>();
-    string ability = val.get<picojson::object>()
-                                ["jobs"].get<picojson::object>()
-                                [job].get<picojson::object>()
-                                ["ability"].get<std::string>();
-    picojson::array items;
-    user.insert(make_pair("item_list", items));
-    user.insert(make_pair("status", status));
-    user.insert(make_pair("ability_set", ability));
-    fs.open("resorse/ability.json");
-    fs >> val2;
-    fs.close();
-    picojson::array abilitys = val2.get<picojson::object>()
-                                [ability].get<picojson::array>();
-    for (const auto& e : abilitys){
-        arr.push_back(e.get<picojson::object>());
-    }
-    picojson::array ar;
-    for (object e : arr){
-        int a = e["Lv"].get<double>();
-        if (a == 1){
-            abilit.insert(make_pair(e["name"].get<string>(), e));
-            ar.push_back(value(e));
-        }
-    }
-    user.insert(make_pair("abilitys", ar));
-    ofstream ofs("resorse/chara.json");
-    ofs << picojson::value(user).serialize(true);
-}
-
-unordered_map<string, string> Write::load_string(){
+tuple<unordered_map<string, string>, vector<string>> Write::load_string(){
     fs.open("resorse/chara.json");
     fs >> val;
     fs.close();
-    object obj = val.get<object>();
+    picojson::object obj = val.get<object>();
     pro_string["name"] = obj["name"].get<string>();
     pro_string["job"] = obj["job"].get<string>();
     pro_string["sexual"] = obj["sexual"].get<string>();
     pro_string["ability_set"] = obj["ability_set"].get<string>();
     picojson::array abilitys = obj["abilitys"].get<picojson::array>();
     for (picojson::value e : abilitys){
-        pro_string["abi_name"] = e.get<object>()["name"].get<string>();
-        pro_string["kind"] = e.get<object>()["kind"].get<string>();
+        string abi = e.get<object>()["name"].get<string>();
+        abi_name.push_back(e.get<object>()["name"].get<string>());
+        pro_string[abi + "_kind"] = e.get<object>()["kind"].get<string>();
         picojson::object obj2 = e.get<object>()["effect"].get<object>();
-        pro_string["eff_name"] = obj2["name"].get<string>();
-        pro_string["eff_size"] = obj2["effect_size"].get<double>();
+        pro_string[abi + "_eff_name"] = obj2["name"].get<string>();
     }
-    return pro_string;
+    return forward_as_tuple(pro_string, abi_name);
+}
+
+
+unordered_map<string, double> Write::load_float(){
+    fs.open("resorse/chara.json");
+    fs >> val;
+    fs.close();
+    picojson::object obj = val.get<object>();
+    pro_float["Lv"] = obj["Lv"].get<double>();
+    pro_float["cool_time"] = obj["cool_time"].get<double>();
+    pro_float["money"] = obj["money"].get<double>();
+    picojson::object status = obj["status"].get<object>();
+    pro_float["atk"] = status["atk"].get<double>();
+    pro_float["def"] = status["def"].get<double>();
+    pro_float["hp"] = status["hp"].get<double>();
+    pro_float["int"] = status["int"].get<double>();
+    pro_float["mp"] = status["mp"].get<double>();
+    pro_float["pow"] = status["pow"].get<double>();
+    picojson::array abilitys = obj["abilitys"].get<picojson::array>();
+    for (auto e: abilitys){
+        string key = e.get<object>()["effect"].get<object>()["name"].get<string>();
+        pro_float[key + "_Lv"] = e.get<object>()["Lv"].get<double>();
+        pro_float[key + "_eff_size"] = e.get<object>()["effect"].get<object>()["effect_size"].get<double>();
+    }
+    return pro_float;
+}
+
+void Write::over_write(vector<string> c_strings = {}, vector<double> c_float = {}, vector<bool> bools = {}){
+    // {abi, cool, Lv, money, status, atk, def, hp, int, mp, pow}
+    picojson::array abi_list;
+    picojson::object status;
+    tie(pro_string, abi_name) = load_string();
+    pro_float = load_float();
+    auto itr = c_strings.begin();
+    auto itr2 = c_float.begin();
+    auto itr3 = bools.begin();
+    DeleteFileA("resorse/chara.json");
+    user.insert(make_pair("name", value(pro_string["name"])));
+    user.insert(make_pair("job", value(pro_string["job"])));
+    user.insert(make_pair("sexual", value(pro_string["sexual"])));
+    user.insert(make_pair("ability_set", value(pro_string["ability_set"])));
+    if (*itr3){//string{name, kind, eff_name} float{Lv, size}
+        picojson::object abilitys {};
+        picojson::object effect {};
+        abilitys.insert(make_pair("name", value(*itr)));
+        itr++;
+        abilitys.insert(make_pair("kind", value(*itr)));
+        itr++;
+        abilitys.insert(make_pair("Lv", value(*itr2)));
+        itr ++;
+        effect.insert(make_pair("name", value(*itr)));
+        itr++;
+        effect.insert(make_pair("effect_size",value{*itr2}));
+        itr2++;
+        abilitys.insert(make_pair("effect", effect));
+        abi_list.push_back(value(abilitys));
+    }
+    itr3++;
+    for (auto na : abi_name){
+        picojson::object abilitys {};
+        picojson::object effect {};
+        abilitys.insert(make_pair("name", value(na)));
+        abilitys.insert(make_pair("kind", value(pro_string[na+"_kind"])));
+        abilitys.insert(make_pair("Lv", value(pro_float[na + "_Lv"])));
+        effect.insert(make_pair("name", value(pro_string[na + "_eff_name"])));
+        effect.insert(make_pair("effect_size",value{pro_float[na + "_eff_size"]}));
+        abilitys.insert(make_pair("effect", effect));
+        abi_list.push_back(value(abilitys));
+    }
+    user.insert(make_pair("abilitys", abi_list));
+    if (*itr3) {//float{cool}
+        user.insert(make_pair("cool_time", value(*itr2)));
+        itr2++;
+    } else {
+        user.insert(make_pair("cool_time", value(pro_float["cool_time"])));
+    }
+    itr3++;
+    if (*itr3) {//float{Lv}
+        user.insert(make_pair("Lv", value(*itr2)));
+        itr2++;
+    } else {
+        user.insert(make_pair("Lv", value(pro_float["Lv"])));
+    }
+    itr3++;
+    if (*itr3){//float{money}
+        user.insert(make_pair("money", value(*itr2)));
+        itr2++;
+    } else {
+        user.insert(make_pair("money", value(pro_float["money"])));
+    }
+    itr3++;
+    if (*itr3){
+        itr3++;
+        if (*itr3){
+        status.insert(make_pair("atk", value(*itr2)));
+        itr2++;
+        }else{
+                status.insert(make_pair("atk", value(pro_float["atk"])));
+        }
+        itr3++;
+        if (*itr3){
+        status.insert(make_pair("def", value(*itr2)));
+        itr2++;
+        }
+        else{
+            status.insert(make_pair("def", value(pro_float["def"])));
+        }
+        if (*itr3){
+            status.insert(make_pair("hp", value(*itr2)));
+        itr2++;
+        }
+        else{
+        status.insert(make_pair("hp", value(pro_float["hp"])));
+        }
+        if(*itr3){
+            status.insert(make_pair("int", value(*itr2)));
+        itr2++;
+        }
+        else{
+            status.insert(make_pair("int", value(pro_float["int"])));
+        }
+        if(*itr3){
+            status.insert(make_pair("mp", value(*itr2)));
+        itr2++;
+        }
+        else{
+            status.insert(make_pair("mp", value(pro_float["mp"])));
+        }if(*itr3){
+            status.insert(make_pair("pow", value(*itr2)));
+        itr2++;
+        }
+        else{
+            status.insert(make_pair("pow", value(pro_float["pow"])));
+        }user.insert(make_pair("status", value(status)));
+    } else {
+        status.insert(make_pair("atk", value(pro_float["atk"])));
+        status.insert(make_pair("def", value(pro_float["def"])));
+        status.insert(make_pair("hp", value(pro_float["hp"])));
+        status.insert(make_pair("int", value(pro_float["int"])));
+        status.insert(make_pair("mp", value(pro_float["mp"])));
+        status.insert(make_pair("pow", value(pro_float["pow"])));
+        user.insert(make_pair("status", value(status)));
+    }
+    
+    ofstream ofs("resorse/chara.json");
+    ofs << value(user).serialize(true);
 }

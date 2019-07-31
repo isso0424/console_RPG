@@ -39,6 +39,51 @@ void Create::chara(){
         }
         cout << "“ü—Í‚³‚ê‚½’l‚ª•s³‚Å‚·" << endl << ">>>"; 
     }
-    Write write;
-    write.chara(name, job, sexual);
+    picojson::object user;
+    picojson::object root;
+    picojson::object abilit;
+    double money = 0;
+    double cool = 10;
+    double lv = 1;
+    user.insert(make_pair("name", picojson::value(name)));
+    user.insert(make_pair("job", picojson::value(job)));
+    user.insert(make_pair("sexual", picojson::value(sexual)));
+    user.insert(make_pair("money", picojson::value(money)));
+    user.insert(make_pair("cool_time", picojson::value(cool)));
+    user.insert(make_pair("Lv", value(lv)));
+    fs.open("resorse/job.json");
+    fs >> val;
+    fs.close();
+    picojson::object status = val.get<picojson::object>()
+                                ["jobs"].get<picojson::object>()
+                                [job].get<picojson::object>()
+                                ["initial_value"].get<picojson::object>();
+    string ability = val.get<picojson::object>()
+                                ["jobs"].get<picojson::object>()
+                                [job].get<picojson::object>()
+                                ["ability"].get<std::string>();
+    picojson::array items;
+    user.insert(make_pair("item_list", items));
+    user.insert(make_pair("status", status));
+    user.insert(make_pair("ability_set", ability));
+    fs.open("resorse/ability.json");
+    fs >> val;
+    fs.close();
+    picojson::array abilitys = val.get<picojson::object>()
+                                [ability].get<picojson::array>();
+    vector<object> arr;
+    for (const auto& e : abilitys){
+        arr.push_back(e.get<picojson::object>());
+    }
+    picojson::array ar;
+    for (object e : arr){
+        int a = e["Lv"].get<double>();
+        if (a == 1){
+            abilit.insert(make_pair(e["name"].get<string>(), e));
+            ar.push_back(value(e));
+        }
+    }
+    user.insert(make_pair("abilitys", ar));
+    ofstream ofs("resorse/chara.json");
+    ofs << picojson::value(user).serialize(true);
 }
