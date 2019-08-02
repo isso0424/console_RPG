@@ -13,6 +13,7 @@ private:
     int chose;
     void checkstatus();
     void job_command();
+    void select_map();
     std::fstream fs;
     picojson::value val;
 };

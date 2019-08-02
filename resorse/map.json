@@ -1,0 +1,15 @@
+{
+    "maps":[
+                {
+        "name": "plame",
+        "Lv": 1,
+        "monstars":[
+            "slime",
+            "wild pig",
+            "wild bird"
+            ],
+        "id":0
+        }
+
+    ]
+}
