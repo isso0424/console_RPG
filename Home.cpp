@@ -6,6 +6,7 @@
 #include <windows.h>
 #include "Create.hpp"
 #include "Write.hpp"
+#include "maps.hpp"
 using namespace std;
 
 void Home::select_map(){
@@ -36,7 +37,9 @@ void Home::select_map(){
                 continue;
             }
             string map_kind =  map_list[map_id];
-            std::cout << map_kind << endl;
+            std::cout << map_kind << "‚ÖˆÚ“®‚µ‚Ü‚·" << endl;
+            Maps ma;
+            ma.move_field(map_id);
             break;
         }
     }
