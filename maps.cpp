@@ -6,6 +6,47 @@
 using namespace std;
 using namespace picojson;
 
+void Maps::in_field(vector<string> monstars, int id_a, picojson::array map_list){
+    fs.open("resorse/progress.json");
+    fs >> val;
+    fs.close();
+    cout << "‚±‚±‚ÅoŒ»‚·‚éƒ‚ƒ“ƒXƒ^[‚Í" << endl;
+    for (string mon : monstars){
+        cout << mon << endl;
+    }
+    cout << "‚Å‚·" << endl;
+    int id;
+
+    for (value e : map_list){
+        id = e.get<picojson::object>()["id"].get<double>();
+        if (id == id_a){
+            mapo = e;
+            break;
+        }
+    }
+    string id_s = to_string(id_a);
+    int progress = val.get<object>()[id_s].get<object>()["progress"].get<double>();
+    while(true){
+        cout << "##############################################" << endl;
+        cout << "1/i‚Þ  2/‹A‚é(is“x‚ª10%Œ¸‚è‚Ü‚·" << endl;
+        cout << "##############################################" << endl;
+        cin >> action;
+        if (0 < action < 3){
+            switch (action)
+            {
+            case 1:
+                
+                break;
+            case 2:
+                break;
+            default:
+                break;
+            }
+            break;
+        }
+    }
+}
+
 void Maps::move_field(int map_id){
     fs.open("resorse/map.json");
     fs >> val;
@@ -19,10 +60,10 @@ void Maps::move_field(int map_id){
             break;
         }
     }
-    cout << mapo.get<object>()["name"].get<string>() << "ã®æƒ…å ±ã‚’èª­ã¿è¾¼ã‚“ã§ã„ã¾ã™" << endl;
+    cout << mapo.get<object>()["name"].get<string>() << "‚Ìƒf[ƒ^‚ð“Ç‚Ýž‚ñ‚Å‚¢‚Ü‚·" << endl;
     monstar_list = mapo.get<object>()["monstars"].get<picojson::array>();
     for (auto e: monstar_list){
         monstars.push_back(e.get<string>());
     }
-    
+    in_field(monstars, id, map_list);
 }
