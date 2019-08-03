@@ -2,6 +2,7 @@
 #include "picojson.h"
 #include "maps.hpp"
 #include <fstream>
+#include "Write.hpp"
 
 using namespace std;
 using namespace picojson;
@@ -25,25 +26,71 @@ void Maps::in_field(vector<string> monstars, int id_a, picojson::array map_list)
         }
     }
     string id_s = to_string(id_a);
-    int progress = val.get<object>()[id_s].get<object>()["progress"].get<double>();
+    picojson::array pros = val.get<object>()["progress"].get<picojson::array>();
+    std::vector<double> progresses;
+    for (auto e : pros){
+        progresses.push_back(e.get<double>());
+    }
+    int progress = progresses[id_a];
+    vector<double> progresses2;
     while(true){
+        
         cout << "##############################################" << endl;
-        cout << "1/進む  2/帰る(進行度が10%減ります" << endl;
+        cout << "1/進む  2/帰る(進行度が10%減ります  現在の進行度 : " << progress << "%" << endl;
         cout << "##############################################" << endl;
         cin >> action;
         if (0 < action < 3){
+            fs.open("resorse/progress.json");
+            fs >> val2;
+            fs.close();
+            auto progresses = vector<double>{};
+            auto progresses2 = vector<double>{};
             switch (action)
             {
             case 1:
-                
+                writer.over_write_progress(progress + 3, id_a);
+                pros = val2.get<object>()["progress"].get<picojson::array>();
+                for (auto e : pros){
+                    progresses.push_back(e.get<double>());
+                }
+                progress = progresses[id_a];
+                cout << "現在の進行度 : " << progress << "%" << endl;
                 break;
             case 2:
+                pros = val2.get<object>()["progress"].get<picojson::array>();
+                for (auto e : pros){
+                    progresses.push_back(e.get<double>());
+                }
+                progress = progresses[id_a];
+                
+                if (progress <= 10){
+                writer.over_write_progress(0, id_a);
+                }else{
+                    writer.over_write_progress(progress - 10, id_a);
+                }
+                pros = val2.get<object>()["progress"].get<picojson::array>();
+                for (auto e : pros){
+                    progresses2.push_back(e.get<double>());
+                }
+                progress = progresses2[id_a];
+                cout << "現在の進行度 : " << progress << "%" << endl;
                 break;
             default:
                 break;
             }
-            break;
+            if (action == 2){
+                break;
+            }
         }
+        fs.open("resorse/progress.json");
+        fs >> val3;
+        fs.close();
+        pros = val3.get<object>()["progress"].get<picojson::array>();
+        auto progresses = vector<double>{};
+        for (auto e : pros){
+            progresses.push_back(e.get<double>());
+        }
+        progress = progresses[id_a];
     }
 }
 

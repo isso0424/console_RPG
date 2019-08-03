@@ -10,6 +10,28 @@
 using namespace std;
 using namespace picojson;
 
+void Write::over_write_progress(double progress, int map_id){
+    fs.open("resorse/progress.json");
+    fs >> val;
+    fs.close();
+    DeleteFileA("resorse/progress.json");
+    picojson::array progresses = val.get<object>()["progress"].get<picojson::array>();
+    picojson::array progress_list;
+    int count = 0;
+    for (auto e: progresses){
+        if (map_id == count){
+            progress_list.push_back(picojson::value(progress));
+        }
+        else {
+            progress_list.push_back(value(e.get<double>()));
+        }
+    }
+    ofstream ofs("resorse/progress.json");
+    picojson::object root;
+    root.insert(make_pair("progress", progress_list));
+    ofs << value(root).serialize(true) << endl;
+}
+
 tuple<unordered_map<string, string>, vector<string>> Write::load_string(){
     fs.open("resorse/chara.json");
     fs >> val;
