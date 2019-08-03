@@ -25,6 +25,7 @@ void Write::over_write_progress(double progress, int map_id){
         else {
             progress_list.push_back(value(e.get<double>()));
         }
+        count++;
     }
     ofstream ofs("resorse/progress.json");
     picojson::object root;

@@ -12,8 +12,14 @@ int Maps::load_progress(int map_id){
     fs >> val;
     fs.close();
     pros = val.get<object>()["progress"].get<picojson::array>();
+    auto progresses = vector<double>{};
     for (auto e : pros){
         progresses.push_back(e.get<double>());
+    }
+    int count = 0;
+    for (auto e:progresses){
+        cout << count << " : " << e << endl;
+        count++;
     }
     progress = progresses[map_id];
     return progress;
@@ -28,9 +34,8 @@ void Maps::in_field(vector<string> monstars, int id_a, picojson::array map_list)
         cout << mon << endl;
     }
     cout << "です" << endl;
-    progress = load_progress(id_a);
     while(true){
-        
+        progress = load_progress(id_a);
         cout << "##############################################" << endl;
         cout << "1/進む  2/帰る(進行度が10%減ります  現在の進行度 : " << progress << "%" << endl;
         cout << "##############################################" << endl;
@@ -61,7 +66,6 @@ void Maps::in_field(vector<string> monstars, int id_a, picojson::array map_list)
                 break;
             }
         }
-        progress = load_progress(id_a);
     }
 }
 
